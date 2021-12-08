@@ -1,0 +1,21 @@
+<idea-plugin>
+    <id>com.xbb</id>
+    <name>yang</name>
+    <vendor email="xbbjava@163.com" url="https://www.ddddd.com">xbb</vendor>
+
+    <description><![CDATA[获取集思录, 东方财富可转债实时数据.获取集思录待发转债数据,可以通过条件筛选数据, 并可以按价格, 溢价率等条件进行排序]]></description>
+
+    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <toolWindow id="yang"   secondary="false" anchor="right"
+                    factoryClass="com.xbb.CBToolWindowFactory" doNotActivateOnStart="true"/>
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+</idea-plugin>
