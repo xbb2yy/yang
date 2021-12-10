@@ -14,6 +14,7 @@ public class BondConstant {
     public static final String DB_LOW = "双低";
     public static final String CONVERT_PRICE = "转股价";
     public static final String CONVERT_VALUE = "转股价值";
+    public static final String CURR_ISS_AMT = "剩余规模";
 
     public static final String STOCK_NAME = "正股名称";
     public static final String STOCK_CODE = "正股代码";

@@ -67,6 +67,9 @@ public class JSLConvertibleBond implements AbstractTableEntity {
     @TableProperty(name = BondConstant.YTM_RT, index = 16)
     private String ytmRt; // 到期收益率
 
+    @TableProperty(name = BondConstant.CURR_ISS_AMT, index = 17)
+    private String currIssAmt;
+
     @Override
     public String getIdentity() {
         return bondId;
