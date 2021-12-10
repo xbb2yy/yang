@@ -15,6 +15,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -25,6 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.xbb.constant.Constants.EMPTY_STR;
 
@@ -45,6 +47,18 @@ public class JiSiLuWindow {
         table.setFillsViewportHeight(true);
         JiSiLuModel model = new JiSiLuModel(JSLConvertibleBond.class);
         table.setModel(model);
+
+        List<String> redeemList = JiSiLuModel.bonds.values().stream().filter(bond -> "R".equals(bond.getRedeemIcon()))
+                .map(JSLConvertibleBond::getBondId).collect(Collectors.toList());
+        table.getColumn(BondConstant.BOND_CODE).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (redeemList.contains(value.toString())){
+                    cell.setBackground(Color.ORANGE);}
+                return cell;
+            }
+        });
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
         sorter.setComparator(model.findColumn(BondConstant.BOND_PRICE), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         sorter.setComparator(model.findColumn(BondConstant.BOND_INCREASE_RATE), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
@@ -123,27 +137,8 @@ public class JiSiLuWindow {
         return 0;
     }
 
-    @NotNull
-    private ActionListener buildFilterActionListener(DefaultTableModel model, JTable table, List<RowFilter<Object, Object>> filters) {
-        return l -> {
-            buidFilter(filters, model, nameField, low, high, premiumRateField);
-            if (jRadioButton.isSelected()) {
-                filters.add(new RowFilter<>() {
-                    @Override
-                    public boolean include(Entry<? extends Object, ? extends Object> entry) {
-                        return !entry.getValue(model.findColumn(BondConstant.BOND_PRICE)).equals("100");
-                    }
-                });
-            }
-
-            TableRowSorter rowSorter = (TableRowSorter) table.getRowSorter();
-            rowSorter.setRowFilter(RowFilter.andFilter(filters));
-            model.fireTableRowsUpdated(0, table.getRowCount() - 1);
-        };
-    }
-
     static void buidFilter(List<RowFilter<Object, Object>> filters, DefaultTableModel model, JTextField nameField, JTextField low, JTextField high,
-                    JTextField premiumRateField) {
+                           JTextField premiumRateField) {
         filters.clear();
         String text = nameField.getText();
         if (StringUtils.isNotBlank(text)) {
@@ -191,6 +186,25 @@ public class JiSiLuWindow {
             };
             filters.add(rowFilter);
         }
+    }
+
+    @NotNull
+    private ActionListener buildFilterActionListener(DefaultTableModel model, JTable table, List<RowFilter<Object, Object>> filters) {
+        return l -> {
+            buidFilter(filters, model, nameField, low, high, premiumRateField);
+            if (jRadioButton.isSelected()) {
+                filters.add(new RowFilter<>() {
+                    @Override
+                    public boolean include(Entry<? extends Object, ? extends Object> entry) {
+                        return !entry.getValue(model.findColumn(BondConstant.BOND_PRICE)).equals("100");
+                    }
+                });
+            }
+
+            TableRowSorter rowSorter = (TableRowSorter) table.getRowSorter();
+            rowSorter.setRowFilter(RowFilter.andFilter(filters));
+            model.fireTableRowsUpdated(0, table.getRowCount() - 1);
+        };
     }
 
 }

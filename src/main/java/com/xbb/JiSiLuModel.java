@@ -11,11 +11,15 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class JiSiLuModel extends JavaBeanTableModel<JSLConvertibleBond> {
+
+    public static final Map<String, JSLConvertibleBond> bonds = new HashMap<>();
 
     public JiSiLuModel(Class<JSLConvertibleBond> c) {
         super(c);
@@ -48,6 +52,7 @@ public class JiSiLuModel extends JavaBeanTableModel<JSLConvertibleBond> {
                     JsonArray rows = jsonElement.getAsJsonObject().get("rows").getAsJsonArray();
                     for (JsonElement row : rows) {
                         JSLConvertibleBond bond = gsonBuilder.create().fromJson(row.getAsJsonObject().get("cell"), JSLConvertibleBond.class);
+                        bonds.put(bond.getBondId(), bond);
                         insertEntityRow(bond);
                     }
                 }, 0, Constants.DATA_REFRESH_INTERVAL, TimeUnit.SECONDS);

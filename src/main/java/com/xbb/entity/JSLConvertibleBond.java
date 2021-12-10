@@ -70,6 +70,10 @@ public class JSLConvertibleBond implements AbstractTableEntity {
     @TableProperty(name = BondConstant.CURR_ISS_AMT, index = 17)
     private String currIssAmt;
 
+    private String bondNmTip; // 转债提示
+
+    private String redeemIcon; // 强赎标记
+
     @Override
     public String getIdentity() {
         return bondId;
