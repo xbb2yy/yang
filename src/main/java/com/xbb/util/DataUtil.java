@@ -3,6 +3,7 @@ package com.xbb.util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.intellij.ide.util.PropertiesComponent;
 import com.xbb.constant.Constants;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -35,11 +36,12 @@ import java.util.List;
  */
 public class DataUtil {
 
+
     public static String JSL_COOKIE = "";
 
     static {
         try {
-            JSL_COOKIE = getJSLCookie();
+            JSL_COOKIE = PropertiesComponent.getInstance().getValue("JSL_COOKIE");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -72,17 +74,9 @@ public class DataUtil {
         }
 
         JsonElement jsonElement = JsonParser.parseString(s);
-        JsonArray rows = jsonElement.getAsJsonObject().get("rows").getAsJsonArray();
+        JsonArray rows = jsonElement.getAsJsonObject
+                ().get("rows").getAsJsonArray();
         System.out.println("获取集思录数据，数据总条数:" + rows.size());
-        if (rows.size() == 30) {
-            try {
-                String cookie = getJSLCookie();
-                JSL_COOKIE = cookie;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            System.out.println("重新获取cookie" + s);
-        }
         return s;
     }
 
@@ -97,7 +91,7 @@ public class DataUtil {
      * @return
      * @throws Exception
      */
-    private static String getJSLCookie() throws Exception {
+    public static String getJSLCookie() throws Exception {
 
         ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
         ScriptEngine engine = scriptEngineManager.getEngineByName("javascript");
@@ -119,6 +113,8 @@ public class DataUtil {
             httpPost.setEntity(new UrlEncodedFormEntity(objects, "UTF-8"));
             httpPost.setHeader("Content-type", "application/x-www-form-urlencoded");
             HttpResponse response = client.execute(httpPost);
+            HttpEntity entity = response.getEntity();
+            String s = EntityUtils.toString(entity);
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode != 200) {
                 return null;
@@ -131,6 +127,12 @@ public class DataUtil {
             e.printStackTrace();
             return null;
         }
-        return builder.substring(0, builder.length() - 2);
+        String substring = builder.substring(0, builder.length() - 2);
+
+        PropertiesComponent.getInstance().setValue("JSL_COOKIE", substring);
+        JSL_COOKIE = substring;
+        System.out.println("cookie: " + substring);
+        return substring;
     }
+
 }

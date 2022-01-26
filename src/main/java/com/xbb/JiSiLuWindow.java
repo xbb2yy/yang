@@ -3,19 +3,25 @@ package com.xbb;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.JBTable;
 import com.xbb.constant.BondConstant;
+import com.xbb.constant.Constants;
 import com.xbb.entity.JSLConvertibleBond;
+import com.xbb.util.DataUtil;
 import com.xbb.util.HttpClientPool;
 import com.xbb.util.NumberField;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -26,7 +32,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static com.xbb.constant.Constants.EMPTY_STR;
 
@@ -47,18 +52,6 @@ public class JiSiLuWindow {
         table.setFillsViewportHeight(true);
         JiSiLuModel model = new JiSiLuModel(JSLConvertibleBond.class);
         table.setModel(model);
-
-        List<String> redeemList = JiSiLuModel.bonds.values().stream().filter(bond -> "R".equals(bond.getRedeemIcon()))
-                .map(JSLConvertibleBond::getBondId).collect(Collectors.toList());
-        table.getColumn(BondConstant.BOND_CODE).setCellRenderer(new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if (redeemList.contains(value.toString())){
-                    cell.setBackground(Color.ORANGE);}
-                return cell;
-            }
-        });
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
         sorter.setComparator(model.findColumn(BondConstant.BOND_PRICE), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         sorter.setComparator(model.findColumn(BondConstant.BOND_INCREASE_RATE), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
@@ -104,6 +97,12 @@ public class JiSiLuWindow {
         jPanel.add(jRadioButton);
         jPanel.add(searchBtn);
         jPanel.add(clear);
+        JButton login = new JButton("登录");
+        jPanel.add(login);
+        login.addActionListener(l -> {
+            SampleDialogWrapper loginDialog = new SampleDialogWrapper();
+            loginDialog.showAndGet();
+        });
 
         JBLabel marginRight = new JBLabel("指数:");
         JBLabel marginRightValue = new JBLabel("1937.0");
@@ -207,4 +206,48 @@ public class JiSiLuWindow {
         };
     }
 
+}
+
+class SampleDialogWrapper extends DialogWrapper {
+
+    JTextField nameField = new JTextField();
+    JTextField passField = new JTextField();
+
+    public SampleDialogWrapper() {
+        super(true); // use current window as parent
+        setTitle("集思录登录");
+        init();
+    }
+
+    @Override
+    protected void doOKAction() {
+        System.out.println(nameField.getText());
+        Constants.集思录用户名 = nameField.getText();
+        Constants.集思录密码 = passField.getText();
+        try {
+            DataUtil.getJSLCookie();
+            JiSiLuModel.reFresh();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.doOKAction();
+    }
+
+    @Nullable
+    @Override
+    protected JComponent createCenterPanel() {
+        JPanel dialogPanel = new JPanel(new FlowLayout());
+        dialogPanel.setPreferredSize(new Dimension(20, 150));
+
+        JLabel name = new JLabel("用户名");
+        nameField = new JTextField(16);
+        JLabel password = new JLabel("密码");
+        passField = new JTextField(16);
+        dialogPanel.add(name);
+        dialogPanel.add(nameField);
+        dialogPanel.add(password);
+        dialogPanel.add(passField);
+
+        return dialogPanel;
+    }
 }
