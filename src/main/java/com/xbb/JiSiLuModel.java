@@ -21,15 +21,17 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class JiSiLuModel extends JavaBeanTableModel<JSLConvertibleBond> {
 
+    public static Map<String, String> data = new HashMap<>();
+
     public static final Map<String, JSLConvertibleBond> bonds = new HashMap<>();
-    private static ScheduledExecutorService scheduledExecutorService =  Executors.newSingleThreadScheduledExecutor();
+    private static final ScheduledExecutorService scheduledExecutorService =  Executors.newSingleThreadScheduledExecutor();
     private static boolean init = false;
     public JiSiLuModel(Class<JSLConvertibleBond> c) {
         super(c);
         scheduledExecutorService
                 .scheduleAtFixedRate(() -> {
                     log.info("update data...");
-                    if (LocalTime.now().isAfter(LocalTime.of(15, 05)) || LocalTime.now().isBefore(LocalTime.of(9, 10))) {
+                    if (LocalTime.now().isAfter(LocalTime.of(15, 5)) || LocalTime.now().isBefore(LocalTime.of(9, 10))) {
                         if (init) {
                             return;
                         }
@@ -72,6 +74,7 @@ public class JiSiLuModel extends JavaBeanTableModel<JSLConvertibleBond> {
         for (JsonElement row : rows) {
             JSLConvertibleBond bond = gsonBuilder.create().fromJson(row.getAsJsonObject().get("cell"), JSLConvertibleBond.class);
             bonds.put(bond.getBondId(), bond);
+            data.put(row.getAsJsonObject().get("id").getAsString(), row.getAsJsonObject().get("cell").toString());
             insertEntityRow(bond);
         }
     }

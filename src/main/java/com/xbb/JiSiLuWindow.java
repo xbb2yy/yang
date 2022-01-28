@@ -1,6 +1,7 @@
 package com.xbb;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -27,6 +28,8 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -49,6 +52,28 @@ public class JiSiLuWindow {
     public JiSiLuWindow() {
 
         JBTable table = new JBTable();
+
+        table.addMouseMotionListener(new MouseAdapter(){
+            public void mouseMoved(MouseEvent e) {
+                int row=table.rowAtPoint(e.getPoint());
+                int col=table.columnAtPoint(e.getPoint());
+                if(row>-1 && col>-1){
+                    Object value=table.getValueAt(row, col);
+                    if(null!=value && !"".equals(value)) {
+                        String valueAt = table.getValueAt(row, 0).toString();
+                        String text = JiSiLuModel.data.get(valueAt);
+                        JsonElement jsonElement = JsonParser.parseString(text);
+                        StringBuilder builder = new StringBuilder();
+                        JsonObject f = jsonElement.getAsJsonObject();
+                        builder.append(f.get("bond_nm").getAsString()).append("\t转债编码: ").append(f.get("bond_id").getAsString()).append("<\br>")
+                                .append("转股价格: ").append(f.get("convert_price").getAsString())
+                                .append("转股代码: ").append(f.get("stock_id").getAsString());
+                         table.setToolTipText(builder.toString() );//悬浮显示单元格内容
+                    } else
+                        table.setToolTipText(null);//关闭提示
+                }
+            }
+        });
         table.setFillsViewportHeight(true);
         JiSiLuModel model = new JiSiLuModel(JSLConvertibleBond.class);
         table.setModel(model);
