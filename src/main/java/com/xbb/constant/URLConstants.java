@@ -15,4 +15,7 @@ public class URLConstants {
 
     public static final String PRE_LIST = "https://www.jisilu.cn/data/cbnew/pre_list/?___jsl=LST___t="
             + System.currentTimeMillis();  // 待发转债数据
+
+    public static final String INDEX_PERFORMANCE = "https://www.jisilu.cn/data/idx_performance/list/?___jsl=LST___t="
+            + System.currentTimeMillis(); // 指数涨幅
 }
