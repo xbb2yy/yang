@@ -167,7 +167,7 @@ public class JiSiLuWindow {
         String text = nameField.getText();
         if (StringUtils.isNotBlank(text)) {
             filters.add(RowFilter.regexFilter(text, model.findColumn(BondConstant.BOND_NAME),
-                    model.findColumn(BondConstant.STOCK_NAME), model.findColumn(BondConstant.BOND_CODE)));
+                    model.findColumn(BondConstant.STOCK_NAME)));
         }
 
         if (NumberUtils.isCreatable(low.getText())) {

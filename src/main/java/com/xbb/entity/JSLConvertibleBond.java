@@ -26,9 +26,10 @@ public class JSLConvertibleBond implements AbstractTableEntity {
     private String price; // 可转债价格
 
     @TableProperty(name = BondConstant.BOND_INCREASE_RATE, index = 3)
+
     private String increaseRt; // 可转债涨跌幅
 
-    @TableProperty(name = BondConstant.STOCK_CODE, index = 4)
+    @TableProperty(name = BondConstant.STOCK_NAME, index = 4)
     private String stockNm; // 股票代码
 
     @TableProperty(name = BondConstant.STOCK_PRICE, index = 5)

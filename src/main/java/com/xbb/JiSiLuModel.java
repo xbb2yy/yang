@@ -25,7 +25,7 @@ public class JiSiLuModel extends JavaBeanTableModel<JSLConvertibleBond> {
 
     public static final Map<String, JSLConvertibleBond> bonds = new HashMap<>();
     private static final ScheduledExecutorService scheduledExecutorService =  Executors.newSingleThreadScheduledExecutor();
-    private static boolean init = false;
+    private static volatile boolean init = false;
     public JiSiLuModel(Class<JSLConvertibleBond> c) {
         super(c);
         scheduledExecutorService
