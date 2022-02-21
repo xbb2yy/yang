@@ -12,10 +12,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 /**
  * 待发转债
@@ -49,6 +53,9 @@ public class CbPreModel extends JavaBeanTableModel<CbPre> {
             CbPre data = gsonBuilder.create().fromJson(row.getAsJsonObject().get("cell"), CbPre.class);
             if (data.getProgressNm().contains("申购"))
                 data.setProgressNm(data.getProgressNm().substring(0, 12));
+            String progressDt = data.getProgressDt();
+            LocalDate d = LocalDate.parse(progressDt, DateTimeFormatter.ISO_LOCAL_DATE);
+            if (DAYS.between(d, LocalDate.now()) > 365) continue;
             insertEntityRow(data);
         }
     }
