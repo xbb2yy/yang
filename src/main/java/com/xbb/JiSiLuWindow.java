@@ -65,9 +65,9 @@ public class JiSiLuWindow {
                         JsonElement jsonElement = JsonParser.parseString(text);
                         StringBuilder builder = new StringBuilder();
                         JsonObject f = jsonElement.getAsJsonObject();
-                        builder.append(f.get("bond_nm").getAsString()).append("\t转债编码: ").append(f.get("bond_id").getAsString()).append("<\br>")
-                                .append("转股价格: ").append(f.get("convert_price").getAsString())
-                                .append("转股代码: ").append(f.get("stock_id").getAsString());
+                        builder.append(f.get("bond_nm").getAsString()).append("\t代码:").append(f.get("bond_id").getAsString()).append("\r\n")
+                                .append("\t转股价格:").append(f.get("convert_price").getAsString())
+                                .append("\t股票代码").append(f.get("stock_id").getAsString());
                          table.setToolTipText(builder.toString() );//悬浮显示单元格内容
                     } else
                         table.setToolTipText(null);//关闭提示

@@ -1,8 +1,6 @@
 package com.xbb;
 
 import com.google.gson.*;
-import com.intellij.ide.util.AppPropertiesComponentImpl;
-import com.intellij.ide.util.PropertiesComponent;
 import com.xbb.constant.Constants;
 import com.xbb.constant.URLConstants;
 import com.xbb.entity.CbPre;
