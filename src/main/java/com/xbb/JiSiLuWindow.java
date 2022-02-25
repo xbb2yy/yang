@@ -5,9 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.JBTable;
@@ -53,13 +50,13 @@ public class JiSiLuWindow {
 
         JBTable table = new JBTable();
 
-        table.addMouseMotionListener(new MouseAdapter(){
+        table.addMouseMotionListener(new MouseAdapter() {
             public void mouseMoved(MouseEvent e) {
-                int row=table.rowAtPoint(e.getPoint());
-                int col=table.columnAtPoint(e.getPoint());
-                if(row>-1 && col>-1){
-                    Object value=table.getValueAt(row, col);
-                    if(null!=value && !"".equals(value)) {
+                int row = table.rowAtPoint(e.getPoint());
+                int col = table.columnAtPoint(e.getPoint());
+                if (row > -1 && col > -1) {
+                    Object value = table.getValueAt(row, col);
+                    if (null != value && !"".equals(value)) {
                         String valueAt = table.getValueAt(row, 0).toString();
                         String text = JiSiLuModel.data.get(valueAt);
                         JsonElement jsonElement = JsonParser.parseString(text);
@@ -68,7 +65,7 @@ public class JiSiLuWindow {
                         builder.append(f.get("bond_nm").getAsString()).append("\t代码:").append(f.get("bond_id").getAsString()).append("\r\n")
                                 .append("\t转股价格:").append(f.get("convert_price").getAsString())
                                 .append("\t股票代码").append(f.get("stock_id").getAsString());
-                         table.setToolTipText(builder.toString() );//悬浮显示单元格内容
+                        table.setToolTipText(builder.toString());//悬浮显示单元格内容
                     } else
                         table.setToolTipText(null);//关闭提示
                 }
