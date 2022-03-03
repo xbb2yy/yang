@@ -83,6 +83,7 @@ public class JiSiLuWindow {
         sorter.setComparator(model.findColumn(BondConstant.YTM_RT), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         sorter.setComparator(model.findColumn(BondConstant.DB_LOW), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         sorter.setComparator(model.findColumn(BondConstant.CURR_ISS_AMT), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
+        sorter.setComparator(model.findColumn("换手率"), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         table.setRowSorter(sorter);
 
 
