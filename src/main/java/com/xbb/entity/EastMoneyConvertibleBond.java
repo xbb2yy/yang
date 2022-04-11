@@ -27,20 +27,20 @@ public class EastMoneyConvertibleBond implements AbstractTableEntity {
     @TableProperty(name = BondConstant.BOND_INCREASE_RATE, index = 3)
     private String f3;
 
-    @TableProperty(name = BondConstant.STOCK_NAME, index = 4)
-    private String f234;
-
-    @TableProperty(name = BondConstant.STOCK_PRICE, index = 5)
-    private String f229;
-
-    @TableProperty(name = BondConstant.STOCK_INCREASE_RATE, index = 6)
-    private String f230;
-
-    @TableProperty(name = BondConstant.PREMIUM_RT, index = 7)
+    @TableProperty(name = BondConstant.PREMIUM_RT, index = 4)
     private String f237;
 
-    @TableProperty(name = BondConstant.DB_LOW, index = 8)
+    @TableProperty(name = BondConstant.DB_LOW, index = 5)
     private String dBlow;
+
+    @TableProperty(name = BondConstant.STOCK_PRICE, index = 6)
+    private String f229;
+
+    @TableProperty(name = BondConstant.STOCK_INCREASE_RATE, index = 7)
+    private String f230;
+
+    @TableProperty(name = BondConstant.STOCK_NAME, index = 8)
+    private String f234;
 
     @TableProperty(name = "上市日期", index = 9)
     private String f26;

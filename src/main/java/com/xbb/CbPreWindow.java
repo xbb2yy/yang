@@ -30,6 +30,7 @@ public class CbPreWindow {
         sorter.setComparator(model.findColumn("转股价"), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         sorter.setComparator(model.findColumn("百元股票含权"), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         sorter.setComparator(model.findColumn("配售10张股数"), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
+        sorter.setComparator(model.findColumn("发行规模"), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         table.setRowSorter(sorter);
 
         JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));

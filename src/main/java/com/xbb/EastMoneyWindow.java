@@ -10,8 +10,6 @@ import com.xbb.constant.BondConstant;
 import com.xbb.entity.EastMoneyConvertibleBond;
 import com.xbb.util.HttpClientPool;
 import com.xbb.util.NumberField;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -124,7 +122,7 @@ public class EastMoneyWindow {
     @NotNull
     private ActionListener buildFilterActionListener(DefaultTableModel model, JTable table, List<RowFilter<Object, Object>> filters) {
         return l -> {
-            JiSiLuWindow.buidFilter(filters, model, nameField, low, high, premiumRateField);
+            JiSiLuWindow.buildFilter(filters, model, nameField, low, high, premiumRateField, null);
             if (jRadioButton.isSelected()) {
                 filters.add(new RowFilter<>() {
                     @Override
@@ -136,7 +134,6 @@ public class EastMoneyWindow {
 
             TableRowSorter rowSorter = (TableRowSorter) table.getRowSorter();
             rowSorter.setRowFilter(RowFilter.andFilter(filters));
-            model.fireTableRowsUpdated(0, table.getRowCount() - 1);
         };
     }
 }

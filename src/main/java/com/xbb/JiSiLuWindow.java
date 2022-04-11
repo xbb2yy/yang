@@ -30,6 +30,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -44,6 +45,7 @@ public class JiSiLuWindow {
     JTextField low = new NumberField(); // 最低价
     JTextField high = new NumberField(); // 最高价
     JTextField premiumRateField = new NumberField(); // 溢价率
+    JTextField ytmRtField = new NumberField(); // 溢价率
     JRadioButton jRadioButton = new JRadioButton("已上市");
 
     public JiSiLuWindow() {
@@ -89,8 +91,9 @@ public class JiSiLuWindow {
 
         JLabel label = new JBLabel("价格区间");
         JLabel to = new JBLabel("到");
-        JLabel name = new JLabel("\t名称");
+        JLabel name = new JLabel("名称");
         JLabel premiumRate = new JBLabel("溢价率");
+        JLabel ytmRt = new JBLabel("到期收益率");
         JButton searchBtn = new JButton("筛选");
         searchBtn.setIcon(AllIcons.Actions.Search);
         JButton clear = new JButton("清空");
@@ -104,6 +107,7 @@ public class JiSiLuWindow {
             high.setText(EMPTY_STR);
             nameField.setText(EMPTY_STR);
             premiumRateField.setText(EMPTY_STR);
+            ytmRtField.setText(EMPTY_STR);
             jRadioButton.setSelected(false);
             searchBtn.doClick();
         });
@@ -115,6 +119,8 @@ public class JiSiLuWindow {
         jPanel.add(high);
         jPanel.add(premiumRate);
         jPanel.add(premiumRateField);
+        jPanel.add(ytmRt);
+        jPanel.add(ytmRtField);
         jPanel.add(name);
         jPanel.add(nameField);
         jPanel.add(jRadioButton);
@@ -159,8 +165,8 @@ public class JiSiLuWindow {
         return 0;
     }
 
-    static void buidFilter(List<RowFilter<Object, Object>> filters, DefaultTableModel model, JTextField nameField, JTextField low, JTextField high,
-                           JTextField premiumRateField) {
+    static void buildFilter(List<RowFilter<Object, Object>> filters, DefaultTableModel model, JTextField nameField, JTextField low, JTextField high,
+                            JTextField premiumRateField,  JTextField ytmRtField) {
         filters.clear();
         String text = nameField.getText();
         if (StringUtils.isNotBlank(text)) {
@@ -208,12 +214,25 @@ public class JiSiLuWindow {
             };
             filters.add(rowFilter);
         }
+        if (Objects.nonNull(ytmRtField) && NumberUtils.isCreatable(ytmRtField.getText())) {
+            RowFilter<Object, Object> rowFilter = new RowFilter<>() {
+                @Override
+                public boolean include(Entry<? extends Object, ? extends Object> entry) {
+                    Object value = entry.getValue(model.findColumn(BondConstant.YTM_RT));
+                    if ( (Objects.nonNull(value) && StringUtils.isNotBlank(value.toString())) && NumberUtils.isCreatable(value.toString())) {
+                        return Double.valueOf(value.toString()) > Double.valueOf(ytmRtField.getText());
+                    }
+                    return false;
+                }
+            };
+            filters.add(rowFilter);
+        }
     }
 
     @NotNull
     private ActionListener buildFilterActionListener(DefaultTableModel model, JTable table, List<RowFilter<Object, Object>> filters) {
         return l -> {
-            buidFilter(filters, model, nameField, low, high, premiumRateField);
+            buildFilter(filters, model, nameField, low, high, premiumRateField, ytmRtField);
             if (jRadioButton.isSelected()) {
                 filters.add(new RowFilter<>() {
                     @Override
@@ -225,7 +244,6 @@ public class JiSiLuWindow {
 
             TableRowSorter rowSorter = (TableRowSorter) table.getRowSorter();
             rowSorter.setRowFilter(RowFilter.andFilter(filters));
-            model.fireTableRowsUpdated(0, table.getRowCount() - 1);
         };
     }
 
