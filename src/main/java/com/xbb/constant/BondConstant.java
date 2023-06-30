@@ -22,4 +22,6 @@ public class BondConstant {
     public static final String STOCK_INCREASE_RATE = "股票涨跌";
     public static final String STOCK_PRICE = "股价";
     public static final String STOCK_PB = "PB";
+    public static final String LAST_CHG_DT = "日期";
+    public static final String TURNOVER_RT = "换手率";
 }

@@ -18,4 +18,7 @@ public class URLConstants {
 
     public static final String INDEX_PERFORMANCE = "https://www.jisilu.cn/data/idx_performance/list/?___jsl=LST___t="
             + System.currentTimeMillis(); // 指数涨幅
+
+
+    public static final String JSL_BOND_DETAIL_URL = "https://www.jisilu.cn/data/cbnew/detail_hist/%s?___jsl=LST___t="  + System.currentTimeMillis(); ;
 }

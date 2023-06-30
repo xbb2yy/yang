@@ -56,7 +56,7 @@ public class EastMoneyTableModel extends JavaBeanTableModel<EastMoneyConvertible
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 0, Constants.DATA_REFRESH_INTERVAL, TimeUnit.SECONDS);
+        }, 0, 2, TimeUnit.SECONDS);
     }
 
     @Override

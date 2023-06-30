@@ -20,6 +20,7 @@ public class Index implements AbstractTableEntity {
     public static final String 本月涨幅 = "本月涨幅";
     public static final String 本季涨幅 = "本季涨幅";
     public static final String 本年涨幅 = "本年涨幅";
+    public static final String 涨幅2022 = "2022涨幅";
     public static final String 涨幅2021 = "2021涨幅";
     public static final String 涨幅2020 = "2020涨幅";
     public static final String 涨幅2019 = "2019涨幅";
@@ -50,22 +51,25 @@ public class Index implements AbstractTableEntity {
     @TableProperty(name = 本年涨幅, index = 6)
     private String last_year_chg_pct;
 
-    @TableProperty(name = 涨幅2021, index = 7)
+    @TableProperty(name = 涨幅2022, index = 7)
+    private String year_2022ChgPct;
+
+    @TableProperty(name = 涨幅2021, index = 8)
     private String year_2021ChgPct;
 
-    @TableProperty(name = 涨幅2020, index = 8)
+    @TableProperty(name = 涨幅2020, index = 9)
     private String year_2020ChgPct;
 
-    @TableProperty(name = 涨幅2019, index = 9)
+    @TableProperty(name = 涨幅2019, index = 10)
     private String year_2019ChgPct;
 
-    @TableProperty(name = 涨幅2018, index = 10)
+    @TableProperty(name = 涨幅2018, index = 11)
     private String year_2018ChgPct;
 
-    @TableProperty(name = 涨幅2017, index = 11)
+    @TableProperty(name = 涨幅2017, index = 12)
     private String year_2017ChgPct;
 
-    @TableProperty(name = 涨幅2016, index = 12)
+    @TableProperty(name = 涨幅2016, index = 13)
     private String year_2016ChgPct;
 
 

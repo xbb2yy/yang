@@ -20,7 +20,7 @@ public class CBToolWindowFactory implements ToolWindowFactory {
         JiSiLuWindow jiSiLuWindow = new JiSiLuWindow();
         CbPreWindow cbPreWindow = new CbPreWindow();
         IndexPerformanceWindow indexPerformanceWindow = new IndexPerformanceWindow();
-        ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
+        ContentFactory contentFactory = ContentFactory.getInstance();
         Content t = contentFactory.createContent(jiSiLuWindow.panel, "完整", false);
         Content e = contentFactory.createContent(eastMoneyWindow.panel, "精简", false);
         Content d = contentFactory.createContent(cbPreWindow.panel, "待发转债", false);
@@ -43,3 +43,4 @@ public class CBToolWindowFactory implements ToolWindowFactory {
     }
 
 }
+

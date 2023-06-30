@@ -1,10 +1,9 @@
 package com.xbb.util;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.intellij.ide.util.PropertiesComponent;
 import com.xbb.constant.Constants;
+import com.xbb.entity.BondDailyDetail;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -18,6 +17,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -39,6 +39,7 @@ public class DataUtil {
 
     public static String JSL_COOKIE = "";
 
+    public static Gson gson = new Gson();
     static {
         try {
             JSL_COOKIE = PropertiesComponent.getInstance().getValue("JSL_COOKIE");
@@ -93,8 +94,8 @@ public class DataUtil {
      */
     public static String getJSLCookie() throws Exception {
 
-        ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
-        ScriptEngine engine = scriptEngineManager.getEngineByName("javascript");
+        NashornScriptEngineFactory engineFactory = new NashornScriptEngineFactory();
+        ScriptEngine engine = engineFactory.getScriptEngine();
         engine.eval(new InputStreamReader(DataUtil.class.getResourceAsStream("/jsl.js")));
         Invocable invocable = (Invocable) engine;
         ArrayList<NameValuePair> objects = new ArrayList<>();
@@ -121,7 +122,7 @@ public class DataUtil {
             }
             List<Cookie> cookies = httpCookieStore.getCookies();
             for (Cookie cookie : cookies) {
-                builder.append(cookie.getName()).append("=").append(URLEncoder.encode(cookie.getValue(), StandardCharsets.UTF_8)).append("; ");
+                builder.append(cookie.getName()).append("=").append(URLEncoder.encode(cookie.getValue(), StandardCharsets.UTF_8.displayName())).append("; ");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -133,6 +134,43 @@ public class DataUtil {
         JSL_COOKIE = substring;
         System.out.println("cookie: " + substring);
         return substring;
+    }
+
+
+    public static List<BondDailyDetail> getBondDetail(String url) {
+        CloseableHttpClient client = HttpClientBuilder.create().build();
+        HttpPost httpPost = getHttpPost(url);
+        httpPost.addHeader("Cookie", JSL_COOKIE);
+
+        ArrayList<NameValuePair> objects = new ArrayList<>();
+        objects.add(new BasicNameValuePair("page", "1"));
+        objects.add(new BasicNameValuePair("rp", "50"));
+        String s = "";
+        try {
+            httpPost.setEntity(new UrlEncodedFormEntity(objects, "UTF-8"));
+            httpPost.setHeader("Content-type", "application/x-www-form-urlencoded");
+            HttpResponse response = client.execute(httpPost);
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == 200) {
+                HttpEntity entity = response.getEntity();
+                s = EntityUtils.toString(entity);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JsonElement jsonElement = JsonParser.parseString(s);
+        JsonArray rows = jsonElement.getAsJsonObject
+                ().get("rows").getAsJsonArray();
+        List<BondDailyDetail> list = new ArrayList<>();
+        GsonBuilder gsonBuilder = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+        for (JsonElement row : rows) {
+            JsonObject cell = row.getAsJsonObject().get("cell").getAsJsonObject();
+            BondDailyDetail detail = gsonBuilder.create().fromJson(cell, BondDailyDetail.class);
+            list.add(detail);
+        }
+        System.out.println("获取集思录数据，数据总条数:" + rows.size());
+        return list;
     }
 
 }

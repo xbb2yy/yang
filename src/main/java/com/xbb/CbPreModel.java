@@ -9,11 +9,13 @@ import com.xbb.util.DataUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -27,15 +29,14 @@ public class CbPreModel extends JavaBeanTableModel<CbPre> {
 
     public CbPreModel(Class<CbPre> c) {
         super(c);
-        if (LocalTime.now().isAfter(LocalTime.of(15, 05)) || LocalTime.now().isBefore(LocalTime.of(9, 10))) {
+        if (LocalTime.now().isAfter(LocalTime.of(15, 5)) || LocalTime.now().isBefore(LocalTime.of(9, 10))) {
             updateData();
             return;
         }
-        Executors.newSingleThreadScheduledExecutor()
-                .scheduleAtFixedRate(() -> {
-                    log.info("update data...");
-                    updateData();
-                }, 0, Constants.DATA_REFRESH_INTERVAL, TimeUnit.SECONDS);
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            log.info("update data...");
+            updateData();
+        }, 0, Constants.DATA_REFRESH_INTERVAL, TimeUnit.SECONDS);
     }
 
     private void updateData() {
@@ -49,9 +50,9 @@ public class CbPreModel extends JavaBeanTableModel<CbPre> {
         JsonArray rows = jsonElement.getAsJsonObject().get("rows").getAsJsonArray();
         for (JsonElement row : rows) {
             CbPre data = gsonBuilder.create().fromJson(row.getAsJsonObject().get("cell"), CbPre.class);
-            if (data.getProgressNm().contains("申购"))
-                data.setProgressNm(data.getProgressNm().substring(0, 12));
+            if (data.getProgressNm().contains("申购")) data.setProgressNm(data.getProgressNm().substring(0, 12));
             String progressDt = data.getProgressDt();
+            if (Objects.isNull(progressDt)) continue;
             LocalDate d = LocalDate.parse(progressDt, DateTimeFormatter.ISO_LOCAL_DATE);
             if (DAYS.between(d, LocalDate.now()) > 365) continue;
             insertEntityRow(data);

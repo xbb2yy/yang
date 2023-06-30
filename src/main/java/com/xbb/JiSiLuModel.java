@@ -78,4 +78,9 @@ public class JiSiLuModel extends JavaBeanTableModel<JSLConvertibleBond> {
             insertEntityRow(bond);
         }
     }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
+    }
 }

@@ -28,8 +28,8 @@ public class IndexPerformanceWindow {
         sorter.setComparator(model.findColumn(Index.本月涨幅), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         sorter.setComparator(model.findColumn(Index.本季涨幅), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         sorter.setComparator(model.findColumn(Index.本年涨幅), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
+        sorter.setComparator(model.findColumn(Index.涨幅2022), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         sorter.setComparator(model.findColumn(Index.涨幅2021), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
-        sorter.setComparator(model.findColumn(Index.涨幅2020), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         sorter.setComparator(model.findColumn(Index.涨幅2019), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         sorter.setComparator(model.findColumn(Index.涨幅2018), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         sorter.setComparator(model.findColumn(Index.涨幅2017), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));

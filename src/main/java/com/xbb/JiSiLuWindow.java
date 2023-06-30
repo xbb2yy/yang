@@ -4,12 +4,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.JBTable;
 import com.xbb.constant.BondConstant;
 import com.xbb.constant.Constants;
+import com.xbb.constant.URLConstants;
+import com.xbb.entity.BondDailyDetail;
 import com.xbb.entity.JSLConvertibleBond;
 import com.xbb.util.DataUtil;
 import com.xbb.util.HttpClientPool;
@@ -27,6 +30,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -87,6 +91,39 @@ public class JiSiLuWindow {
         sorter.setComparator(model.findColumn(BondConstant.CURR_ISS_AMT), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         sorter.setComparator(model.findColumn("换手率"), Comparator.comparingDouble(JiSiLuWindow::applyAsDouble));
         table.setRowSorter(sorter);
+        table.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // 点击几次，这里是双击事件
+                if (e.getClickCount() == 2) {
+                    int row = table.getSelectedRow();
+                    Object code = table.getValueAt(row, 0);
+                    Object name = table.getValueAt(row, 1);
+                    BindDetailWrapper dialog = new BindDetailWrapper(code.toString(), name.toString());
+                    dialog.showAndGet();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
 
 
         JLabel label = new JBLabel("价格区间");
@@ -108,7 +145,6 @@ public class JiSiLuWindow {
             nameField.setText(EMPTY_STR);
             premiumRateField.setText(EMPTY_STR);
             ytmRtField.setText(EMPTY_STR);
-            jRadioButton.setSelected(false);
             searchBtn.doClick();
         });
 
@@ -292,3 +328,32 @@ class SampleDialogWrapper extends DialogWrapper {
         return dialogPanel;
     }
 }
+
+class BindDetailWrapper extends DialogWrapper {
+
+    public static String codes = "";
+
+
+    protected BindDetailWrapper(String code, String name) {
+        super(true);
+        codes = code;
+        setTitle(name +  "转债详情");
+        init();
+    }
+
+    @Override
+    protected @Nullable JComponent createCenterPanel() {
+        List<BondDailyDetail> list = DataUtil.getBondDetail(String.format(URLConstants.JSL_BOND_DETAIL_URL, codes));
+        JPanel dialogPanel = new JPanel(new BorderLayout());
+        dialogPanel.setPreferredSize(new Dimension(500, 800));
+        JBTable table = new JBTable();
+        table.setFillsViewportHeight(true);
+        BondModel bondModel = new BondModel(BondDailyDetail.class);
+        list.forEach(bondModel::insertEntityRow);
+        table.setModel(bondModel);
+        JBScrollPane scrollPane = new JBScrollPane(table);
+        dialogPanel.add(scrollPane, BorderLayout.CENTER);
+        return dialogPanel;
+    }
+}
+
